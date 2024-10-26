@@ -30,6 +30,6 @@ def resize_images(input_folder, output_folder, max_size=(128, 128)):
                 print(f'Resized and saved: {output_path}')
 
 # Usage
-input_folder = r'C:\Users\natha\480Project\480_Semester_Project\Data\Fake Images\AI-Generated Images'
-output_folder = r'C:\Users\natha\480Project\480_Semester_Project\Data\Fake Images 128\AI-Generated Images 128'
+input_folder = r"C:\Users\natha\OneDrive\Desktop\Aidan Test"
+output_folder = r"C:\Users\natha\OneDrive\Desktop\Aidan Test\128"
 resize_images(input_folder, output_folder)

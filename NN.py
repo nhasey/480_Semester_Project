@@ -5,6 +5,7 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
+from datetime import datetime
 
 # Define the transformations
 transform = transforms.Compose([
@@ -90,7 +91,7 @@ criterion = nn.CrossEntropyLoss()
 cnn_optimizer = optim.Adam(cnn_model.parameters(), lr=0.001)
 
 # Training loop
-num_epochs = 10
+num_epochs = 1
 for epoch in range(num_epochs):
     train_loss, train_acc = train(cnn_model, train_loader, criterion, cnn_optimizer)
     test_loss, test_acc = evaluate(cnn_model, test_loader, criterion)
@@ -103,3 +104,8 @@ for epoch in range(num_epochs):
 cnn_test_loss, cnn_test_acc = evaluate(cnn_model, test_loader, criterion)
 print("\nFinal Evaluation on Test Set:")
 print(f"CNN Test Loss: {cnn_test_loss:.4f}, Test Accuracy: {cnn_test_acc:.2f}%")
+
+# Save the entire model
+timestamp = datetime.now().strftime("%m-%d-%Y_%H%M%S")
+torch.save(cnn_model, '{timestamp}_cnn_complete_model.pth')
+
