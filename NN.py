@@ -1,111 +1,153 @@
-import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
-from datetime import datetime
+import os
+from torch.utils.data import DataLoader, ConcatDataset, random_split
+import kagglehub
+import torch.nn.functional as F
+from collections import Counter
 
-# Define the transformations
+# Setting up Kaggle API credentials
+os.environ['KAGGLE_USERNAME'] = 'sammynouadir'
+os.environ['KAGGLE_KEY'] = 'f62bf71a470603e17116d3aa1843768b'
+
+# Loading datasets from Kaggle using kagglehub
+
+#pathAI = kagglehub.dataset_download("chelove4draste/10k-ai-generated-faces")
+pathHuman = kagglehub.dataset_download("kaustubhdhote/human-faces-dataset")
+if os.name == 'nt':  #windows
+    home_dir = os.environ.get('USERPROFILE', '')  
+else:  #mac
+    home_dir = os.environ.get('HOME', '') 
+
+pathHuman = os.path.join(home_dir, '.cache', 'kagglehub', 'datasets', 'kaustubhdhote', 'human-faces-dataset', 'versions', '1', 'Human Faces Dataset')
+
+# Data handling and transformations
 transform = transforms.Compose([
+    transforms.Resize((128, 128)),
     transforms.ToTensor(),
-    transforms.Normalize((0.5647, 0.4770, 0.4273), (0.2724, 0.2619, 0.2676))
+    transforms.Normalize((0.5424, 0.4509, 0.3992), (0.2629, 0.2425, 0.2437))
 ])
 
-# Define the path to your dataset
-train_dir = r'C:\Users\natha\480Project\480_Semester_Project\Data\128Formatted\train'
-test_dir = r'C:\Users\natha\480Project\480_Semester_Project\Data\128Formatted\test'
+# Combining datasets using ConcatDataset
+combined_dataset = ConcatDataset([
+    #torchvision.datasets.ImageFolder(root=pathAI, transform=transform),
+    torchvision.datasets.ImageFolder(root=pathHuman, transform=transform)
+])
 
-# Use ImageFolder to load the datasets
-train_dataset = torchvision.datasets.ImageFolder(root=train_dir, transform=transform)
-test_dataset = torchvision.datasets.ImageFolder(root=test_dir, transform=transform)
+# Splitting the combined dataset into 80% train and 20% test
+train_size = int(0.8 * len(combined_dataset))
+test_size = len(combined_dataset) - train_size
+#filling train with 80% and test with 20% from combined dataset
+train_dataset, test_dataset = random_split(combined_dataset, [train_size, test_size])
 
-# Create DataLoaders
+# Dataset loaders
 batch_size = 64
-train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
-test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
 
-# Define the CNN model
-class SimpleCNN(nn.Module):
+
+class_counts = Counter()
+for _, labels in train_loader:
+    class_counts.update(labels.numpy())
+
+print("Class distribution in training set:", class_counts)
+
+class  VerifierCNN(nn.Module):
     def __init__(self):
-        super(SimpleCNN, self).__init__()
-        self.conv1 = nn.Conv2d(3, 16, 3, padding=1)
-        self.conv2 = nn.Conv2d(16, 32, 3, padding=1)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.fc1 = nn.Linear(32 * 32 * 32, 128)  # Adjusted input size
-        self.fc2 = nn.Linear(128, 2)  # Two output classes: real and fake
-        self.relu = nn.ReLU()
-
+        super().__init__()
+        self.conv1=nn.Conv2d(3,8,kernel_size=3,padding=1)
+        self.relu=nn.ReLU()
+        self.pool=nn.MaxPool2d(2,2)
+        self.conv2=nn.Conv2d(8,16,kernel_size=3,padding=1)
+        self.fc1=nn.Linear(16*32*32,2)
+    
     def forward(self, x):
-        x = self.pool(self.relu(self.conv1(x)))
-        x = self.pool(self.relu(self.conv2(x)))
-        x = x.view(-1, 32 * 32 * 32)  # Flatten the output for the fully connected layers
-        x = self.relu(self.fc1(x))
-        x = self.fc2(x)
+        x=self.relu(self.conv1(x))
+        x=self.pool(x)
+        x=self.relu(self.conv2(x))
+        x=self.pool(x)
+        x=x.view(-1,16*32*32)
+        x=self.fc1(x)
         return x
-
-cnn_model = SimpleCNN()
-
-# Training function
-def train(model, loader, criterion, optimizer):
+    
+def train(model, loader, criterion,optimizer):
     model.train()
-    total_loss = 0
-    correct = 0
-    total = 0
-
+    running_loss=0.0
+    correct=0
+    total=0
     for images, labels in loader:
+        outputs=model(images)
+        loss=criterion(outputs,labels)
+
         optimizer.zero_grad()
-        outputs = model(images)
-        loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
+        running_loss+=loss.item()*images.size(0)
+        _,predicted=torch.max(outputs.data,1)
+        total+=labels.size(0)
+        correct+=(predicted==labels).sum().item()
+    epoch_loss=running_loss/total
+    epoch_acc=100*correct/total
+    return epoch_loss,epoch_acc
 
-        total_loss += loss.item()
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
 
-    return total_loss / len(loader), 100 * correct / total
 
-# Evaluation function
 def evaluate(model, loader, criterion):
     model.eval()
-    total_loss = 0
+    running_loss = 0.0
     correct = 0
     total = 0
+    all_confidences = []
 
     with torch.no_grad():
         for images, labels in loader:
             outputs = model(images)
             loss = criterion(outputs, labels)
-            total_loss += loss.item()
+
+            running_loss += loss.item() * images.size(0)
+
+            probabilities = F.softmax(outputs, dim=1)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    return total_loss / len(loader), 100 * correct / total
+            confidences = probabilities * 100  # Convert to percentages
+            all_confidences.append(confidences)
+            
+            # Make sure the following print statements are consistently indented with the rest of the function
+            print("Raw logits (first 5 samples):", outputs[:5])
+            print("Softmax probabilities (first 5 samples):", probabilities[:5])
 
-# Define loss function and optimizer
-criterion = nn.CrossEntropyLoss()
-cnn_optimizer = optim.Adam(cnn_model.parameters(), lr=0.001)
+    epoch_loss = running_loss / total
+    epoch_acc = 100 * correct / total
+    all_confidences = torch.cat(all_confidences, dim=0)
+    
+    return epoch_loss, epoch_acc, all_confidences
 
-# Training loop
-num_epochs = 1
+
+cnn_model=VerifierCNN()
+criterion=nn.CrossEntropyLoss()
+optimizer=optim.Adam(cnn_model.parameters(),lr=0.0001)
+
+num_epochs=1
+
 for epoch in range(num_epochs):
-    train_loss, train_acc = train(cnn_model, train_loader, criterion, cnn_optimizer)
-    test_loss, test_acc = evaluate(cnn_model, test_loader, criterion)
+    train__loss, train__acc = train(cnn_model, train_loader, criterion, optimizer)
+    test__loss, test__acc, test_confidences = evaluate(cnn_model, test_loader, criterion)
 
-    print(f'Epoch [{epoch+1}/{num_epochs}] - '
-          f'Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}% - '
-          f'Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.2f}%')
-
-# Final evaluation on the test set
-cnn_test_loss, cnn_test_acc = evaluate(cnn_model, test_loader, criterion)
+    print(f'Epoch [{epoch+1}/{num_epochs}]-'
+          f'Train Loss: {train__loss:.4f}, Train Acc: {train__acc:.2f}%-'
+          f'Test Loss: {test__loss:.4f}, Test Acc: {test__acc:.2f}%')
+    
+    # Display confidences for a few test predictions
+    print("\nClass-wise confidence percentages for some test predictions:")
+    for i, confidence in enumerate(test_confidences[:5]):  # Show first 5 test samples
+        print(f"Sample {i+1}: Class 0: {confidence[0]:.2f}%, Class 1: {confidence[1]:.2f}%")
+    
+# Final evaluation
+test__loss, test__acc, test_confidences = evaluate(cnn_model, test_loader, criterion)
 print("\nFinal Evaluation on Test Set:")
-print(f"CNN Test Loss: {cnn_test_loss:.4f}, Test Accuracy: {cnn_test_acc:.2f}%")
-
-# Save the entire model
-timestamp = datetime.now().strftime("%m-%d-%Y_%H%M%S")
-torch.save(cnn_model, '{timestamp}_cnn_complete_model.pth')
-
+print(f"Test Loss: {test__loss:.4f}, Test Accuracy: {test__acc:.2f}%")
