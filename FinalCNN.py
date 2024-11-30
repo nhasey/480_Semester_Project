@@ -115,7 +115,7 @@ cnn_model = VerifierCNN()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(cnn_model.parameters(), lr=0.001)
 
-num_epochs = 1
+num_epochs = 10
 
 # Training loop
 for epoch in range(num_epochs):
