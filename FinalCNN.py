@@ -6,6 +6,7 @@ import torchvision.transforms as transforms
 import os
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
+import torch.nn.functional as F
 
 # Setting up Kaggle API credentials
 os.environ['KAGGLE_USERNAME'] = 'sammynouadir'
@@ -65,6 +66,8 @@ class VerifierCNN(nn.Module):
         # Flatten dynamically
         x = x.view(x.size(0), -1)
         x = self.fc1(x)
+        x = F.softmax(x, dim=1)
+        #getting softmax
         return x
     
 def train(model, loader, criterion, optimizer):
@@ -129,4 +132,6 @@ for epoch in range(num_epochs):
 test_loss, test_acc = evaluate(cnn_model, test_loader, criterion)
 print("\nFinal Evaluation on Test Set:")
 print(f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_acc:.2f}%")
+
+torch.save(cnn_model.state_dict(), 'cnn_weights.pth')
 
