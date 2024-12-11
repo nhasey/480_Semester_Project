@@ -1,6 +1,6 @@
 # `480_Semester_Project`
 
-## CNN
+### CNN
 
 ### (AI vs Real Detection)
 
