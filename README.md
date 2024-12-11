@@ -4,7 +4,7 @@
 
 ### (AI vs Real Detection)
 
-## [`Nathan’s 480_Semester_Project Repo`](https://github.com/nhasey/480_Semester_Project)  
+### [`Nathan’s 480_Semester_Project Repo`](https://github.com/nhasey/480_Semester_Project)  
 To use our model, open FinalCNN.py
 Make sure to use a conda environment.
 Install torch and torchvision.  
@@ -15,7 +15,7 @@ Finally, run FinalCNN.py, which will save a pre-trained model to the file path y
 ## Web application, flask API, and pre-trained model.
 ### (reality|check)
 
-## [`Vas’s reality-check Repo`](https://github.com/vas2000-emu/reality-check)  
+### [`Vas’s reality-check Repo`](https://github.com/vas2000-emu/reality-check)  
 If you want to create the web application yourself, the following would be necessary:  
 [Download and install Node.js](https://nodejs.org)  
 [Facebook’s create-react-app repo](https://github.com/facebook/create-react-app?tab=readme-ov-file)  
