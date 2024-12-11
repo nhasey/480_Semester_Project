@@ -13,7 +13,6 @@ After making the necessary adjustments to the path, Kaggle credentials, making s
 Finally, run FinalCNN.py, which will save a pre-trained model to the file path you are executing this from.
 
 ## Web application, flask API, and pre-trained model.
-
 ### (reality|check)
 
 ## [`Vas’s reality-check Repo`](https://github.com/vas2000-emu/reality-check)  
