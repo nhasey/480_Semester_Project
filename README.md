@@ -5,11 +5,11 @@
 ### (AI vs Real Detection)
 
 [`Nathan’s 480_Semester_Project Repo`](https://github.com/nhasey/480_Semester_Project)  
-To use our model, open FinalCNN.py
-Make sure to use a conda environment.
-Install torch and torchvision.
-You may need to use the commented out line 17 & 18 to get the path on your computer when copy pasting it make sure to add /real-vs-fake in the end. It will not be there automatically and will cause you issues if it is not added. This step will ensure that the database has been installed on your computer and is accessible.
-After making the necessary adjustments to the path, Kaggle credentials, making sure to adjust the username part of the path to your username instead of oussamanouadir as in FinalCNN.py.
+To use our model, open FinalCNN.py  
+Make sure to use a conda environment.  
+Install torch and torchvision.  
+You may need to use the commented out line 17 & 18 to get the path on your computer when copy pasting it make sure to add /real-vs-fake in the end. It will not be there automatically and will cause you issues if it is not added. This step will ensure that the database has been installed on your computer and is accessible.  
+After making the necessary adjustments to the path, Kaggle credentials, making sure to adjust the username part of the path to your username instead of oussamanouadir as in FinalCNN.py.  
 Finally, run FinalCNN.py, which will save a pre-trained model to the file path you are executing this from.
 
 ## Web application, flask API, and pre-trained model.
