@@ -13,15 +13,13 @@ After making the necessary adjustments to the path, Kaggle credentials, making s
 Finally, run FinalCNN.py, which will save a pre-trained model to the file path you are executing this from.
 
 ### Web application, flask API, and pre-trained model.
-### (reality|check)
+### ([`reality|check`](https://realitycheck480.netlify.app/)) (← link to web application)
+### [`Vas’s reality-check Repo`](https://github.com/vas2000-emu/reality-check) 
+To use this already deployed web application, click on the `reality|check`link above to take you to it. Once there, click the BEGIN HERE button. This will take you to a Google Drive folder that contains a README.txt file. In this file you will find the instructions on how to install the requirements listed in requirements.txt, file location instructions for the files cnn_weights.pth and app.py, as well as how to use the web application to detect whether a supplied human face image file is real or AI-generated, with the percentage probability of that determination.
 
-### [`Vas’s reality-check Repo`](https://github.com/vas2000-emu/reality-check)  
-If you want to create the web application yourself, the following would be necessary:  
+The following is optional:
+If you want to create a new web application yourself, the following would be necessary to guide you:    
 [Download and install Node.js](https://nodejs.org)  
 [Facebook’s create-react-app repo](https://github.com/facebook/create-react-app?tab=readme-ov-file)  
 [Online Guide to Creating a react app](https://create-react-app.dev/)  
 Now, skipping ahead, you would have to deploy this by connecting your web application project to a git repo, then creating an account on netlify.com to launch the web application using that git repo.
-
-### [`reality|check`](https://realitycheck480.netlify.app/)
-
-To use this already deployed web application, click on the link above to take you to it. Once there, click the BEGIN HERE button. This will take you to a Google Drive folder that contains a README.txt file. In this file you will find the instructions on how to install the requirements listed in requirements.txt, file location instructions for the files cnn_weights.pth and app.py, as well as how to use the web application to detect whether a supplied human face image file is real or AI-generated, with the percentage probability of that determination.
