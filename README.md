@@ -15,7 +15,7 @@ Finally, run FinalCNN.py, which will save a pre-trained model to the file path y
 ### Web application, flask API, and pre-trained model.
 ### ([`reality|check`](https://realitycheck480.netlify.app/)) (← link to web application)
 ### [`Vas’s reality-check Repo`](https://github.com/vas2000-emu/reality-check) 
-To use this already deployed web application, click on the `reality|check`link above to take you to it. Once there, click the BEGIN HERE button. This will take you to a Google Drive folder that contains a README.txt file. In this file you will find the instructions on how to install the requirements listed in requirements.txt, file location instructions for the files cnn_weights.pth and app.py, as well as how to use the web application to detect whether a supplied human face image file is real or AI-generated, with the percentage probability of that determination.
+To use this already deployed web application, click on the `reality|check`link above to take you to it. Once there, click the BEGIN HERE button. This will take you to a Google Drive folder that contains a `README.txt` file. In this file you will find the instructions on how to install the requirements listed in `requirements.txt`, file location instructions for the files `cnn_weights.pth` and `app.py`, as well as how to use the web application to detect whether a supplied human face image file is real or AI-generated, with the percentage probability of that determination.
 
 The following is optional:
 If you want to create a new web application yourself, the following would be necessary to guide you:    
