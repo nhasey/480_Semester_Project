@@ -17,7 +17,7 @@ Finally, run FinalCNN.py, which will save a pre-trained model to the file path y
 ### (reality|check)
 
 [`Vas’s reality-check Repo`](https://github.com/vas2000-emu/reality-check)  
-If you want to create the web application yourself, the following would be necessary:
+If you want to create the web application yourself, the following would be necessary:  
 [Download and install Node.js](https://nodejs.org)  
 [Facebook’s create-react-app repo](https://github.com/facebook/create-react-app?tab=readme-ov-file)  
 [Online Guide to Creating a react app](https://create-react-app.dev/)  
