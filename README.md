@@ -12,7 +12,7 @@ You may need to use the commented out line 17 & 18 to get the path on your compu
 After making the necessary adjustments to the path, Kaggle credentials, making sure to adjust the username part of the path to your username instead of oussamanouadir as in FinalCNN.py.  
 Finally, run FinalCNN.py, which will save a pre-trained model to the file path you are executing this from.
 
-## Web application, flask API, and pre-trained model.
+### Web application, flask API, and pre-trained model.
 ### (reality|check)
 
 ### [`Vas’s reality-check Repo`](https://github.com/vas2000-emu/reality-check)  
